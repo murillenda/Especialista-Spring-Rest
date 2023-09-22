@@ -34,4 +34,9 @@ public class CadastroCozinha {
         return persist;
     }
 
+    // Select from cozinha where id := id
+    public Cozinha buscar(Long id) {
+        return manager.find(Cozinha.class, id);
+    }
+
 }
