@@ -22,21 +22,21 @@ public class CadastroCozinha {
         return query.getResultList();
     }
 
+    // Select from cozinha where id := id
+    public Cozinha buscar(Long id) {
+        return manager.find(Cozinha.class, id);
+    }
+
     // Quando estamos fazendo uma modificação no nosso contexto de persistencia, precisamos de uma transação, se não da erro.
     // Por isso utilizamos a anotação de transactional, para o método ser executado dentro de uma transação
     @Transactional
-    public Cozinha adicionar(Cozinha cozinha) {
+    public Cozinha salvar(Cozinha cozinha) {
         // O método merge não altera a instância que estamos passando como parâmetro.
         // Por exemplo, quando incluimos uma cozinha, um ID é atribuido pelo banco de dados, pois está em AutoIncremento
         // Então este ID não vai estar atribuido a instância que recebemos no método de cozinha, por isso que retornamos
         // o persist da cozinha e não a cozinha que recebemos no método
         Cozinha persist = manager.merge(cozinha);
         return persist;
-    }
-
-    // Select from cozinha where id := id
-    public Cozinha buscar(Long id) {
-        return manager.find(Cozinha.class, id);
     }
 
 }

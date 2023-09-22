@@ -24,8 +24,8 @@ public class InclusaoCozinhaMain {
         cozinha2.setNome("Japonesa");
 
         // Nesse ponto do código os Id's ainda estão null, após adicionar, irão autoincrementar.
-        cadastroCozinha.adicionar(cozinha1);
-        cadastroCozinha.adicionar(cozinha2);
+        cadastroCozinha.salvar(cozinha1);
+        cadastroCozinha.salvar(cozinha2);
 
         // Provando que os Id's de cozinha 1 e 2 estão null, pois estamos pegando da variável que instanciamos inicialmente
         System.out.printf("%d - %s\n", cozinha1.getId(), cozinha1.getNome());
