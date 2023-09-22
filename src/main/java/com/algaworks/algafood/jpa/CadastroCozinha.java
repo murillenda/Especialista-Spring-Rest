@@ -39,4 +39,12 @@ public class CadastroCozinha {
         return persist;
     }
 
+    @Transactional
+    public void remover(Cozinha cozinha) {
+        // Precisamos buscar a cozinha pelo id para mudar o estado da instancia que está em Transient para uma gerenciada
+        // da entidade cozinha.
+        cozinha = buscar(cozinha.getId());
+        manager.remove(cozinha);
+    }
+
 }
