@@ -1,4 +1,4 @@
-package com.algaworks.algafood.jpa;
+package com.algaworks.algafood.jpa.studyingJPA;
 
 import com.algaworks.algafood.domain.model.Cozinha;
 import jakarta.persistence.EntityManager;
