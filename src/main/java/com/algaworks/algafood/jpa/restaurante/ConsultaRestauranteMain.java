@@ -1,13 +1,15 @@
-package com.algaworks.algafood.jpa;
+package com.algaworks.algafood.jpa.restaurante;
 
 import com.algaworks.algafood.AlgafoodApiApplication;
-import com.algaworks.algafood.domain.model.Cozinha;
-import com.algaworks.algafood.domain.repository.CozinhaRepository;
+import com.algaworks.algafood.domain.model.Restaurante;
+import com.algaworks.algafood.domain.repository.RestauranteRepository;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-public class BuscaCozinhaMain {
+import java.util.List;
+
+public class ConsultaRestauranteMain {
 
     public static void main(String[] args) {
         // Configuração que faz a api rodar e depois já finalizar, para podermos realizar alguns testes
@@ -16,12 +18,14 @@ public class BuscaCozinhaMain {
                 .run(args);
 
         // Pegamos o Bean que inicializamos no Cadastro cozinha para podermos realizar as consultas
-        CozinhaRepository cozinhaRepository = applicationContext.getBean(CozinhaRepository.class);
+        RestauranteRepository restauranteRepository = applicationContext.getBean(RestauranteRepository.class);
 
-        // Buscando cozinha com id 1
-        Cozinha cozinha = cozinhaRepository.buscarPorId(1L);
+        List<Restaurante> restaurantes = restauranteRepository.listar();
 
-        System.out.println(cozinha.getNome());
+        for (Restaurante restaurante : restaurantes) {
+            System.out.printf("%s - %f - %s%n", restaurante.getNome(), restaurante.getTaxaFrete(),
+                    restaurante.getCozinha().getNome());
+        }
 
     }
 

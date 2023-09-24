@@ -1,4 +1,4 @@
-package com.algaworks.algafood.jpa;
+package com.algaworks.algafood.jpa.cozinha;
 
 import com.algaworks.algafood.AlgafoodApiApplication;
 import com.algaworks.algafood.domain.model.Cozinha;
@@ -7,7 +7,7 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-public class AlteracaoCozinhaMain {
+public class ExclusaoCozinhaMain {
 
     public static void main(String[] args) {
         // Configuração que faz a api rodar e depois já finalizar, para podermos realizar alguns testes
@@ -20,9 +20,9 @@ public class AlteracaoCozinhaMain {
 
         Cozinha cozinha = new Cozinha();
         cozinha.setId(1L);
-        cozinha.setNome("Brasileira");
 
-        cozinhaRepository.salvar(cozinha);
+        cozinhaRepository.remover(cozinha);
+
     }
 
 }
