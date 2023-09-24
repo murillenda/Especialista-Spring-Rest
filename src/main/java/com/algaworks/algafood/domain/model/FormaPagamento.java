@@ -4,12 +4,10 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.math.BigDecimal;
-
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class Restaurante {
+public class FormaPagamento {
 
     @EqualsAndHashCode.Include
     @Id
@@ -17,12 +15,6 @@ public class Restaurante {
     private Long id;
 
     @Column(nullable = false)
-    private String nome;
+    private String descricao;
 
-    @Column(name = "taxa_frete", nullable = false)
-    private BigDecimal taxaFrete;
-
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private Cozinha cozinha;
 }
