@@ -1,9 +1,11 @@
 package com.algaworks.algafood.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+@JsonRootName("cozinha")
 @Data
 // Cria os equals and hash code somente nos que eu colocar a anotação.
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
