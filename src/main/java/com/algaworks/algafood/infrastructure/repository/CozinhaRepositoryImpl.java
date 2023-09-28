@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -30,14 +31,18 @@ public class CozinhaRepositoryImpl implements CozinhaRepository {
     @Transactional
     @Override
     public Cozinha salvar(Cozinha cozinha) {
-        Cozinha persist = manager.merge(cozinha);
-        return persist;
+        return manager.merge(cozinha);
     }
 
     @Transactional
     @Override
-    public void remover(Cozinha cozinha) {
-        cozinha = buscarPorId(cozinha.getId());
+    public void remover(Long id) {
+        Cozinha cozinha = buscarPorId(id);
+
+        if (cozinha == null) {
+            throw new EmptyResultDataAccessException(1);
+        }
+
         manager.remove(cozinha);
     }
 }
