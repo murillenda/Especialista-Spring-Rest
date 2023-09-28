@@ -30,8 +30,7 @@ public class RestauranteRepositoryImpl implements RestauranteRepository {
     @Transactional
     @Override
     public Restaurante salvar(Restaurante restaurante) {
-        Restaurante persist = manager.merge(restaurante);
-        return persist;
+        return manager.merge(restaurante);
     }
 
     @Transactional
