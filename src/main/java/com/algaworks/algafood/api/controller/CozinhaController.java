@@ -5,6 +5,7 @@ import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.repository.CozinhaRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class CozinhaController {
     }
 
     @GetMapping("/{cozinhaId}")
-    public ResponseEntity<Cozinha> buscar(@PathVariable("cozinhaId") Long cozinhaId) {
+    public ResponseEntity<Cozinha> buscar(@PathVariable Long cozinhaId) {
         Cozinha cozinha = cozinhaRepository.buscarPorId(cozinhaId);
 
         if (cozinha != null) {
@@ -48,7 +49,7 @@ public class CozinhaController {
     }
 
     @PutMapping("/{cozinhaId}")
-    public ResponseEntity<Cozinha> atualizar(@PathVariable("cozinhaId") Long cozinhaId,
+    public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId,
                                              @RequestBody Cozinha cozinha) {
         Cozinha cozinhaAtual = cozinhaRepository.buscarPorId(cozinhaId);
 
@@ -61,6 +62,23 @@ public class CozinhaController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("{cozinhaId}")
+    public ResponseEntity<Cozinha> remover(@PathVariable Long cozinhaId) {
+        try {
+            Cozinha cozinha = cozinhaRepository.buscarPorId(cozinhaId);
+
+            if (cozinha != null) {
+                cozinhaRepository.remover(cozinha);
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.notFound().build();
+        } catch (DataIntegrityViolationException e) {
+            // Ao retornar o código 409 (CONFLICT) é bom retornar um body descrevendo qual foi o problema que gerou o conflito
+            // Mais pra frente faremos isso na tratativa de erros.
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 
 }
