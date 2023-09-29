@@ -60,9 +60,9 @@ public class CozinhaController {
 
         if (cozinhaAtual != null) {
             // cozinhaAtual.setNome(cozinha.getNome());
-            // Onde colocamos ID, são parâmetros que colocamos para o copyProperties ignorar
+            // Onde colocamos ID, são parâmetros que colocamos para o RecopyProperties ignorar
             BeanUtils.copyProperties(cozinha, cozinhaAtual, "id"); // Método que fala "Copie os valores de propriedade de cozinha e coloque no cozinhaAtual", a mesma coisa do set em cima.
-            cozinhaAtual = cozinhaRepository.salvar(cozinhaAtual);
+            cozinhaAtual = cadastroCozinhaService.salvar(cozinhaAtual);
             return ResponseEntity.ok(cozinhaAtual);
         }
 

@@ -1,11 +1,13 @@
 package com.algaworks.algafood.infrastructure.repository;
 
+import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Estado;
 import com.algaworks.algafood.domain.repository.EstadoRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,8 +37,13 @@ public class EstadoRepositoryImpl implements EstadoRepository {
 
     @Transactional
     @Override
-    public void remover(Estado estado) {
-        estado = buscarPorId(estado.getId());
+    public void remover(Long id) {
+        Estado estado = buscarPorId(id);
+
+        if (estado == null) {
+            throw new EmptyResultDataAccessException(1);
+        }
+
         manager.remove(estado);
     }
 }
