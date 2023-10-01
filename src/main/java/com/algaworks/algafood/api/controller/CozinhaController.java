@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/cozinhas", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -27,21 +28,21 @@ public class CozinhaController {
 
     @GetMapping
     public List<Cozinha> listar() {
-        return cozinhaRepository.listar();
+        return cozinhaRepository.findAll();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
     public CozinhasXmlWrapper listarXml() {
-        return new CozinhasXmlWrapper(cozinhaRepository.listar());
+        return new CozinhasXmlWrapper(cozinhaRepository.findAll());
     }
 
     @GetMapping("/{cozinhaId}")
     public ResponseEntity<Cozinha> buscar(@PathVariable Long cozinhaId) {
-        Cozinha cozinha = cozinhaRepository.buscarPorId(cozinhaId);
+        Optional<Cozinha> cozinha = cozinhaRepository.findById(cozinhaId);
 
-        if (cozinha != null) {
+        if (cozinha.isPresent()) {
             // return ResponseEntity.status(HttpStatus.OK).body(cozinha);
-            return ResponseEntity.ok(cozinha); // Mesmo código do de cima
+            return ResponseEntity.ok(cozinha.get()); // Mesmo código do de cima
         }
         // return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         return ResponseEntity.notFound().build(); // Mesma coisa do de cima
@@ -56,14 +57,14 @@ public class CozinhaController {
     @PutMapping("/{cozinhaId}")
     public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId,
                                              @RequestBody Cozinha cozinha) {
-        Cozinha cozinhaAtual = cozinhaRepository.buscarPorId(cozinhaId);
+        Optional<Cozinha> cozinhaAtual = cozinhaRepository.findById(cozinhaId);
 
-        if (cozinhaAtual != null) {
+        if (cozinhaAtual.isPresent()) {
             // cozinhaAtual.setNome(cozinha.getNome());
             // Onde colocamos ID, são parâmetros que colocamos para o RecopyProperties ignorar
-            BeanUtils.copyProperties(cozinha, cozinhaAtual, "id"); // Método que fala "Copie os valores de propriedade de cozinha e coloque no cozinhaAtual", a mesma coisa do set em cima.
-            cozinhaAtual = cadastroCozinhaService.salvar(cozinhaAtual);
-            return ResponseEntity.ok(cozinhaAtual);
+            BeanUtils.copyProperties(cozinha, cozinhaAtual.get(), "id"); // Método que fala "Copie os valores de propriedade de cozinha e coloque no cozinhaAtual", a mesma coisa do set em cima.
+            Cozinha cozinhaRecuperada = cadastroCozinhaService.salvar(cozinhaAtual.get());
+            return ResponseEntity.ok(cozinhaRecuperada);
         }
 
         return ResponseEntity.notFound().build();
