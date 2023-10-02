@@ -8,8 +8,9 @@ import com.algaworks.algafood.domain.repository.CidadeRepository;
 import com.algaworks.algafood.domain.repository.EstadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class CadastroCidadeService {
@@ -23,12 +24,9 @@ public class CadastroCidadeService {
     public Cidade salvar(Cidade cidade) {
         Long estadoId = cidade.getEstado().getId();
 
-        Estado estado = estadoRepository.buscarPorId(estadoId);
-
-        if (estado == null) {
-            throw new EntidadeNaoEncontradaException(
-                    String.format("Não existe estado com o id %d", estadoId));
-        }
+        Estado estado = estadoRepository.findById(estadoId)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException(
+                        String.format("Não existe estado com o id %d", estadoId)));
 
         cidade.setEstado(estado);
         return cidadeRepository.save(cidade);
