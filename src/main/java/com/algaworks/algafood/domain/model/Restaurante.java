@@ -28,10 +28,6 @@ public class Restaurante {
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private Cozinha cozinha;
-
     @JsonIgnore
     @Embedded // Falando que não é uma coluna, mas sim uma incorporação
     private Endereco endereco;
@@ -45,6 +41,14 @@ public class Restaurante {
     @UpdateTimestamp
     @Column(nullable = false, columnDefinition = "datetime")
     private LocalDateTime dataAtualizacao;
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Cozinha cozinha;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "restaurante")
+    private List<Produto> produtos = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany
