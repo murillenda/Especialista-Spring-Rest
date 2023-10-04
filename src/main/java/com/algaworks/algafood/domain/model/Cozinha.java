@@ -1,9 +1,13 @@
 package com.algaworks.algafood.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonRootName("cozinha")
 @Data
@@ -21,5 +25,11 @@ public class Cozinha {
 
     @Column(nullable = false)
     private String nome;
+
+    // Bom instanciar a list para evitar NullpointerException
+    // Para tratar um relacionamento bidirecional, precisamos tratar a recursividade de alguma forma.
+    @JsonIgnore
+    @OneToMany(mappedBy = "cozinha")
+    private List<Restaurante> restaurantes = new ArrayList<>();
 
 }
