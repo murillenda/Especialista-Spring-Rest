@@ -14,7 +14,7 @@ public interface RestauranteRepository extends CustomJpaRepository<Restaurante, 
         JpaSpecificationExecutor<Restaurante> {
 
     @Nonnull
-    @Query("FROM Restaurante r JOIN FETCH r.cozinha LEFT JOIN FETCH r.formasPagamentos")
+    @Query("FROM Restaurante r JOIN FETCH r.cozinha")
     List<Restaurante> findAll();
 
     List<Restaurante> findTop2ByNomeContaining(String nome);
