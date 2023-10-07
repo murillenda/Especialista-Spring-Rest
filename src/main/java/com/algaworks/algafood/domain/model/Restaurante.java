@@ -57,5 +57,5 @@ public class Restaurante {
     @JoinTable(name = "restaurante_forma_pagamento",
             joinColumns = @JoinColumn(name = "restaurante_id"),
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
-    private List<FormaPagamento> formasPagamentos = new ArrayList<>();
+    private List<FormaPagamento> formasPagamento = new ArrayList<>();
 }

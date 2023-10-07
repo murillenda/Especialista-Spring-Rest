@@ -52,7 +52,7 @@ public class RestauranteController {
         Restaurante restauranteAtual = cadastroRestauranteService.buscarOuFalhar(restauranteId);
 
         BeanUtils.copyProperties(restaurante, restauranteAtual,
-                "id", "formasPagamentos", "endereco", "dataCadastro", "produtos");
+                "id", "formasPagamento", "endereco", "dataCadastro", "produtos");
 
         try {
             return cadastroRestauranteService.salvar(restauranteAtual);
