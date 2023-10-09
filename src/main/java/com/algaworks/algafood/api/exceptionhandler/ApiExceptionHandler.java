@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -16,6 +17,20 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(@Nonnull HttpMessageNotReadableException ex,
+                                                                  @Nonnull HttpHeaders headers,
+                                                                  @Nonnull HttpStatusCode status,
+                                                                  @Nonnull WebRequest request) {
+
+        ProblemType problemType = ProblemType.MENSAGEM_INCOMPREENSIVEL;
+        String detail = "O corpo da requisição está inválido, verifique erro de sintaxe";
+
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
+
+        return super.handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
 
     @ExceptionHandler(NegocioException.class)
     public ResponseEntity<?> handleNegocioException(NegocioException e, WebRequest request) {
@@ -84,7 +99,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     // Retornando um builder do problem, ainda não é o Problem
     // Retornamos o builder e não um Problem, pois se quisermos adicionar outras propriedades, adicionamos no método la
     // em cima
-    private Problem.ProblemBuilder createProblemBuilder(HttpStatus status, ProblemType problemType, String detail) {
+    private Problem.ProblemBuilder createProblemBuilder(HttpStatusCode status, ProblemType problemType, String detail) {
         return Problem.builder()
                 .status(status.value())
                 .type(problemType.getUri())
