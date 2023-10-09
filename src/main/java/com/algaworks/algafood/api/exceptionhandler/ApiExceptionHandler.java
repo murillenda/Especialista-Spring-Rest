@@ -5,6 +5,7 @@ import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import jakarta.annotation.Nonnull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,11 +17,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
+
+
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(@Nonnull HttpMessageNotReadableException ex,
@@ -31,6 +35,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         if (rootCause instanceof InvalidFormatException rootCauseCasted) {
             return handleInvalidFormatException(rootCauseCasted, headers, status, request);
+        } else if (rootCause instanceof PropertyBindingException rootCauseCasted) {
+            return handlePropertyBindingException(rootCauseCasted, headers, status, request);
         }
 
         ProblemType problemType = ProblemType.MENSAGEM_INCOMPREENSIVEL;
@@ -46,9 +52,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                                 @Nonnull HttpStatusCode status,
                                                                 @Nonnull WebRequest request) {
 
-        String property = ex.getPath().stream()
-                .map(JsonMappingException.Reference::getFieldName)
-                .collect(Collectors.joining("."));
+        String property = joinPath(ex.getPath());
 
         ProblemType problemType = ProblemType.MENSAGEM_INCOMPREENSIVEL;
         String detail = String.format("A propriedade '%s' recebeu o valor '%s' que é de um tipo inválido. " +
@@ -57,6 +61,22 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         Problem problem = createProblemBuilder(status, problemType, detail).build();
 
         return handleExceptionInternal(ex, problem, headers, status, request);
+    }
+
+    private ResponseEntity<Object> handlePropertyBindingException(PropertyBindingException e,
+                                                                 @Nonnull HttpHeaders headers,
+                                                                 @Nonnull HttpStatusCode status,
+                                                                 @Nonnull WebRequest request) {
+
+        String property = joinPath(e.getPath());
+
+        ProblemType problemType = ProblemType.MENSAGEM_INCOMPREENSIVEL;
+        String detail = String.format("A propriedade %s não existe. " +
+                "Corrija ou remova essa propriedade e tente novamente.", property);
+
+        Problem problem = createProblemBuilder(status, problemType, detail).build();
+
+        return handleExceptionInternal(e, problem, headers, status, request);
     }
 
     @ExceptionHandler(NegocioException.class)
@@ -105,7 +125,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         if (body == null) {
             body = Problem.builder()
-                    .title(getReasonPhrase(statusCode))
+                    .title(HttpStatus.valueOf(statusCode.value()).getReasonPhrase())
                     .status(statusCode.value())
                     .build();
         } else if (body instanceof String bodyString) {
@@ -118,11 +138,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return super.handleExceptionInternal(ex, body, headers, statusCode, request);
     }
 
-    // TODO Colocar isso em um utils futuramente caso utilize em outros locais
-    private String getReasonPhrase(HttpStatusCode statusCode) {
-        return HttpStatus.valueOf(statusCode.value()).getReasonPhrase();
-    }
-
     // Retornando um builder do problem, ainda não é o Problem
     // Retornamos o builder e não um Problem, pois se quisermos adicionar outras propriedades, adicionamos no método la
     // em cima
@@ -132,5 +147,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .type(problemType.getUri())
                 .title(problemType.getTitle())
                 .detail(detail);
+    }
+
+    private String joinPath(List<JsonMappingException.Reference> references) {
+        return references.stream()
+                .map(JsonMappingException.Reference::getFieldName)
+                .collect(Collectors.joining("."));
     }
 }
