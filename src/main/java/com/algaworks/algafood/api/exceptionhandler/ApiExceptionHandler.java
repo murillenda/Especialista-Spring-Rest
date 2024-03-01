@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -53,6 +55,32 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         Problem problem = createProblemBuilder(status, problemType, detail).build();
 
         return super.handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(@Nonnull MethodArgumentNotValidException ex,
+                                                                  @Nonnull HttpHeaders headers,
+                                                                  @Nonnull HttpStatusCode status,
+                                                                  @Nonnull WebRequest request) {
+
+        ProblemType problemType = ProblemType.DADOS_INVALIDOS;
+        String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
+
+        BindingResult bindingResult = ex.getBindingResult();
+
+        List<Problem.Field> problemFields = bindingResult.getFieldErrors().stream()
+                .map(fieldError -> Problem.Field.builder()
+                        .name(fieldError.getField())
+                        .userMessage(fieldError.getDefaultMessage())
+                        .build())
+                .collect(Collectors.toList());
+
+        Problem problem = createProblemBuilder(status, problemType, detail)
+                .userMessage(detail)
+                .fields(problemFields)
+                .build();
+
+        return super.handleExceptionInternal(ex, problem, headers, status, request);
     }
 
     private ResponseEntity<Object> handleInvalidFormat(@Nonnull InvalidFormatException ex,
