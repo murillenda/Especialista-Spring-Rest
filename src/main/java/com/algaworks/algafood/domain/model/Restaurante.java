@@ -2,7 +2,8 @@ package com.algaworks.algafood.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,10 +24,12 @@ public class Restaurante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotBlank
     @Column(nullable = false)
     private String nome;
 
+    @DecimalMin("1") // Taxa frete tem que ser no mínimo 1 real
+    @PositiveOrZero // Precisa ser um valor positivo ou 0, não aceita valores negativos
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
@@ -46,6 +49,8 @@ public class Restaurante {
 
 //    @JsonIgnore
 //    @JsonIgnoreProperties("hibernateLazyInitializer")
+    @Valid
+    @NotNull
     @ManyToOne
     @JoinColumn(nullable = false)
     private Cozinha cozinha;
