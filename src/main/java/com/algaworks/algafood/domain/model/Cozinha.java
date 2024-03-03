@@ -21,7 +21,7 @@ public class Cozinha {
 
     // Identity significa que estamos passando a responsabilidade de gerar o valor do identificador
     // pro provedor de prsistencia, nesse caso pro banco de dados MySQL
-    @NotNull(groups = Groups.CadastroRestaurante.class)
+    @NotNull(groups = Groups.CozinhaId.class)
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
