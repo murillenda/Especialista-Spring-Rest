@@ -1,8 +1,11 @@
 package com.algaworks.algafood.domain.model;
 
+import com.algaworks.algafood.core.validation.Groups;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,11 +21,13 @@ public class Cozinha {
 
     // Identity significa que estamos passando a responsabilidade de gerar o valor do identificador
     // pro provedor de prsistencia, nesse caso pro banco de dados MySQL
+    @NotNull(groups = Groups.CozinhaId.class)
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     @Column(nullable = false)
     private String nome;
 
