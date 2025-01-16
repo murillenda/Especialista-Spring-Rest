@@ -34,7 +34,8 @@ public class ValorZeroIncluiDescricaoValidator implements ConstraintValidator<Va
                     .getReadMethod() // Precisa ter um método get na classe
                     .invoke(objetoValidacao);
 
-            if (valor.compareTo(BigDecimal.ZERO) == 0) {
+            if (valor != null && descricao != null
+                    && valor.compareTo(BigDecimal.ZERO) == 0) {
                 valido = descricao.toLowerCase().contains(descricaoObrigatoria.toLowerCase());
             }
 
