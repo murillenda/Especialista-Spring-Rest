@@ -1,7 +1,6 @@
 package com.algaworks.algafood.domain.model;
 
 import com.algaworks.algafood.core.validation.Groups;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -33,7 +32,6 @@ public class Cozinha {
 
     // Bom instanciar a list para evitar NullpointerException
     // Para tratar um relacionamento bidirecional, precisamos tratar a recursividade de alguma forma.
-    @JsonIgnore
     @OneToMany(mappedBy = "cozinha")
     private List<Restaurante> restaurantes = new ArrayList<>();
 
