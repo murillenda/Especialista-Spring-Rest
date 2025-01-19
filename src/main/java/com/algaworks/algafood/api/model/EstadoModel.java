@@ -3,15 +3,11 @@ package com.algaworks.algafood.api.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
-public class RestauranteModel {
+public class EstadoModel {
 
     private Long id;
     private String nome;
-    private BigDecimal precoFrete;
-    private CozinhaModel cozinha;
 
 }
